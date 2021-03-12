@@ -1,0 +1,334 @@
+diff --git a/lib/jazz.ide/.package b/lib/jazz.ide/.package
+index eb4acdb28..d3ed56de6 100644
+--- a/lib/jazz.ide/.package
++++ b/lib/jazz.ide/.package
+@@ -44,11 +44,10 @@
+                                     jazz.editor.commonlisp
+                                     jazz.editor.diff
+                                     jazz.editor.javascript
+                                     jazz.editor.jazz
+                                     jazz.editor.scheme
+-                                    jazz.editor.sql
+                                     jazz.editor.tex
+                                     jazz.execution
+                                     jazz.favorite
+                                     jazz.groupware
+                                     jazz.history
+@@ -59,11 +58,10 @@
+                                     jazz.print
+                                     jazz.product
+                                     jazz.profile
+                                     jazz.project
+                                     jazz.recorder
+-                                    jazz.schema ; for now
+                                     jazz.search
+                                     jazz.template
+                                     jazz.text
+                                     jazz.tree
+                                     jazz.ui
+diff --git a/lib/jazz.ide/.project b/lib/jazz.ide/.project
+index 6f2e902bb..a8243ef2a 100644
+--- a/lib/jazz.ide/.project
++++ b/lib/jazz.ide/.project
+@@ -55,11 +55,10 @@
+             (<Jazz-File>       name: servers                   source: {File :context "src" "jazz" "ide" "data" "servers.jazz"})
+             (<Jazz-File>       name: skins                     source: {File :context "src" "jazz" "ide" "data" "skins.jazz"})
+             (<Jazz-File>       name: toolbox                   source: {File :context "src" "jazz" "ide" "data" "toolbox.jazz"})
+             (<Jazz-File>       name: workbench                 source: {File :context "src" "jazz" "ide" "data" "workbench.jazz"})
+             (<Jazz-File>       name: workspaces                source: {File :context "src" "jazz" "ide" "data" "workspaces.jazz"})
+-            (<Jazz-File>       name: connections               source: {File :context "src" "jazz" "ide" "data" "connections.jazz"})
+             (<Jazz-File>       name: colors                    source: {File :context "src" "jazz" "ide" "data" "colors.jazz"})
+             (<Jazz-File>       name: fonts                     source: {File :context "src" "jazz" "ide" "data" "fonts.jazz"})
+             (<Jazz-File>       name: styles                    source: {File :context "src" "jazz" "ide" "data" "styles.jazz"})
+             (<Jazz-File>       name: formats                   source: {File :context "src" "jazz" "ide" "data" "formats.jazz"})
+             (<Jazz-File>       name: doc                       source: {File :context "src" "jazz" "ide" "data" "doc.jazz"}))
+diff --git a/lib/jazz.ide/src/jazz/ide/application/IDE-Actions.jazz b/lib/jazz.ide/src/jazz/ide/application/IDE-Actions.jazz
+index 23ff0e0d9..9d9a469a0 100644
+--- a/lib/jazz.ide/src/jazz/ide/application/IDE-Actions.jazz
++++ b/lib/jazz.ide/src/jazz/ide/application/IDE-Actions.jazz
+@@ -200,13 +200,10 @@
+       (<Action-Item> name: view-traits                action-handler: {Event-Handler :application on-traits})
+       (<Action-Item> name: view-descendants           action-handler: {Event-Handler :application on-descendants} shortcut: {Shortcut :control :alt #\V})
+       (<Action-Item> name: view-preferences           action-handler: {Event-Handler :application on-preferences} shortcut: {Shortcut :control :shift #\-})
+       @wait (<Action-Item> name: view-java-reference-finder action-handler: {Event-Handler :application on-java-reference-finder} shortcut: {Shortcut :control :alt #\A})
+       @wait (<Action-Item> name: view-java-manager          action-handler: {Event-Handler :application on-java-manager})
+-      (<Action-Item> name: view-sql-connections       action-handler: {Event-Handler :application on-sql-connections})
+-      @wait (<Action-Item> name: view-sql-inventory         action-handler: {Event-Handler :application on-sql-inventory} shortcut: {Shortcut :control :alt #\I})
+-      (<Action-Item> name: view-sql-console           action-handler: {Event-Handler :application on-sql-console} shortcut: {Shortcut :control :alt #\L})
+       (<Action-Item> name: view-chapters              action-handler: {Event-Handler :application on-chapters} shortcut: {Shortcut :control :alt #\C})
+       (<Action-Item> name: view-hierarchy             action-handler: {Event-Handler :application on-hierarchy} shortcut: {Shortcut :control :alt #\H})
+       (<Action-Item> name: view-summary               action-handler: {Event-Handler :application on-summary})
+       (<Action-Item> name: view-problems              action-handler: {Event-Handler :application on-problems})
+       (<Action-Item> name: view-documentation-editor  action-handler: {Event-Handler :application on-documentation-editor})
+diff --git a/lib/jazz.ide/src/jazz/ide/application/IDE-Preferences.jazz b/lib/jazz.ide/src/jazz/ide/application/IDE-Preferences.jazz
+index f860426f9..6f5adccfa 100644
+--- a/lib/jazz.ide/src/jazz/ide/application/IDE-Preferences.jazz
++++ b/lib/jazz.ide/src/jazz/ide/application/IDE-Preferences.jazz
+@@ -55,11 +55,10 @@
+         (jazz.editor.jazz)
+  @wait  (jazz.editor.lua)
+  @wait  (jazz.editor.properties)
+         (jazz.editor.python)
+         (jazz.editor.scheme)
+-        (jazz.editor.sql)
+         (jazz.editor.tex)
+         (jazz.groupware)
+         (jazz.ide)
+         (jazz.markup)
+         (jazz.project)
+@@ -81,11 +80,10 @@
+         (<Compare-Text-Preferences>        name: compare-text)
+         (<Diff-Text-Preferences>           name: diff-text)
+         (<Jazz-Text-Preferences>           name: jazz-text)
+         (<Plain-Text-Preferences>          name: plain-text)
+         (<Scheme-Text-Preferences>         name: scheme-text)
+-        (<SQL-Text-Preferences>            name: sql-text)
+         (<Tex-Text-Preferences>            name: tex-text)
+   @wait (<CSharp-Text-Preferences>         name: csharp-text)
+   @wait (<CSS-Text-Preferences>            name: css-text)
+   @wait (<HTML-Text-Preferences>           name: html-text)
+         (<Java-Text-Preferences>           name: java-text)
+@@ -99,12 +97,11 @@
+         (<Console-Preferences>             name: console)
+         (<Compare-Directories-Preferences> name: compare-directories)
+         (<Preferences-Manager-Preferences> name: preferences-manager)
+         (<Search-Preferences>              name: search-manager      active: text
+           (<text~>                                                   active-domain: window)
+-          (<user~>                                                   active-domain: jazz-files user-label: "Scheme Files" user-extensions: :scheme))
+-        (<SQL-Preferences>                 name: sql))
++          (<user~>                                                   active-domain: jazz-files user-label: "Scheme Files" user-extensions: :scheme)))
+       (<Debug-Preferences>                 name: debug)
+       (<Catalog-Preferences>               name: catalog)
+       (<Inspector-Preferences>             name: inspector)
+       (<Designer-Preferences>              name: designer)
+       (<Workbench-Preferences>             name: workbench)))))
+diff --git a/lib/jazz.ide/src/jazz/ide/application/IDE-Profile.jazz b/lib/jazz.ide/src/jazz/ide/application/IDE-Profile.jazz
+index c67ca2ce6..7ba033a06 100644
+--- a/lib/jazz.ide/src/jazz/ide/application/IDE-Profile.jazz
++++ b/lib/jazz.ide/src/jazz/ide/application/IDE-Profile.jazz
+@@ -537,45 +537,10 @@
+       (output-potentials potentials)
+       (let ((count (length potentials)))
+         (user-feedback "Found {a} potential dead code" (if (= count 0) "no" count))
+         (when (> count 0)
+           (edit-document (current-application) {File Home "potentials.jazz"})))))
+-
+-  
+-  ;;;
+-  ;;;; SQL
+-  ;;;
+-  
+-  
+-  @wait
+-  (method (format-sql value)
+-    (cond ((string? value) (format "'{a}'" value))
+-          (else (error "Unable to format SQL value: {s}" value))))
+-  
+-  
+-  @wait
+-  (method (output-tables tables (name: name #f) (select?: select? #t))
+-    (let ((text (get-sql-console-text)))
+-      (output-tables text tables name))
+-    (when select?
+-      (let ((appl (current-application)))
+-        (select-named-workspace appl 'sql))))
+-  
+-  
+-  @wait
+-  (method (output-table table (name: name #f) (select?: select? #t))
+-    (output-tables (list table) name: name select?: select?))
+-  
+-  
+-  @wait
+-  (method (log-tables tables)
+-    (for-each log-table tables))
+-  
+-  
+-  @wait
+-  (method (log-table table)
+-    (log-entry name: (get-name table) data: table))
+   
+   
+   ;;;
+   ;;;; Glue
+   ;;;
+diff --git a/lib/jazz.ide/src/jazz/ide/application/IDE.jazz b/lib/jazz.ide/src/jazz/ide/application/IDE.jazz
+index e35f7f1a0..dfcb63cc5 100644
+--- a/lib/jazz.ide/src/jazz/ide/application/IDE.jazz
++++ b/lib/jazz.ide/src/jazz/ide/application/IDE.jazz
+@@ -56,12 +56,10 @@
+         (jazz.designer.ui.view)
+         (jazz.document)
+         (jazz.editor)
+         (jazz.editor.jazz)
+         (jazz.editor.lisp)
+-        (jazz.editor.sql)
+-        (jazz.editor.sql.view)
+         (jazz.event)
+         (jazz.execution)
+         (jazz.favorite)
+         (jazz.feedback)
+         (jazz.git.ui)
+@@ -236,11 +234,10 @@
+           ((member? ext '("java") test: extension=?) jazz.editor.java:Java-Text-View)
+     @wait ((member? ext '("cs") test: extension=?) jazz.editor.csharp:CSharp-Text-View)
+     @wait ((member? ext '("html" "htm")) jazz.editor.html:HTML-Text-View)
+     @wait ((member? ext '("xml")) Plain-Text-View @wait XML-Text-View)
+           ((member? ext '("jlog")) jazz.editor.jazz:Log-Viewer)
+-          ((member? ext '("sql")) jazz.editor.sql:SQL-Text-View)
+     @wait ((member? ext '("css")) jazz.editor.css:CSS-Text-View)
+     @wait ((member? ext '("properties")) jazz.editor.properties:Properties-Text-View)
+           ((member? ext '("js")) jazz.editor.javascript:JavaScript-Text-View)
+     @wait ((member? ext '("lua")) jazz.editor.lua:Lua-Text-View)
+           ((member? ext '("py")) jazz.editor.python:Python-Text-View)
+@@ -595,30 +592,10 @@
+   
+   (method package (on-clear-console self evt)
+     (clear-console (get-console-text)))
+   
+   
+-  (method package (on-sql-console self evt)
+-    (let ((had-focus? (is? (active-focus) SQL-Console-Text-View)))
+-      (show-console self class: SQL-Console-Manager workspace: 'sql)
+-      (when had-focus?
+-        (fresh-prompt self text: (get-sql-console-text)))))
+-  
+-  
+-  (method (on-sql-connections self evt)
+-    (select-docked SQL-Connections-Manager workspace: 'sql focus?: #t))
+-  
+-  
+-  @convert
+-  (method (on-sql-inventory evt)
+-    (select-docked Inventory-Browser workspace: 'sql focus?: #t))
+-  
+-  
+-  (method (on-sql-tree-output self evt)
+-    (select-docked SQL-Tree-Output 'sql focus?: #t))
+-  
+-  
+   ;;;
+   ;;;; Log
+   ;;;
+   
+   
+diff --git a/lib/jazz.ide/src/jazz/ide/data/connections.jazz b/lib/jazz.ide/src/jazz/ide/data/connections.jazz
+deleted file mode 100644
+index e00890c6c..000000000
+--- a/lib/jazz.ide/src/jazz/ide/data/connections.jazz
++++ /dev/null
+@@ -1,41 +0,0 @@
+-;;;==============
+-;;;  JazzScheme
+-;;;==============
+-;;;
+-;;;; Connections Data
+-;;;
+-;;;  The contents of this file are subject to the Mozilla Public License Version
+-;;;  1.1 (the "License"); you may not use this file except in compliance with
+-;;;  the License. You may obtain a copy of the License at
+-;;;  http://www.mozilla.org/MPL/
+-;;;
+-;;;  Software distributed under the License is distributed on an "AS IS" basis,
+-;;;  WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+-;;;  for the specific language governing rights and limitations under the
+-;;;  License.
+-;;;
+-;;;  The Original Code is JazzScheme.
+-;;;
+-;;;  The Initial Developer of the Original Code is Guillaume Cartier.
+-;;;  Portions created by the Initial Developer are Copyright (C) 1996-2018
+-;;;  the Initial Developer. All Rights Reserved.
+-;;;
+-;;;  Contributor(s):
+-;;;
+-;;;  Alternatively, the contents of this file may be used under the terms of
+-;;;  the GNU General Public License Version 2 or later (the "GPL"), in which
+-;;;  case the provisions of the GPL are applicable instead of those above. If
+-;;;  you wish to allow use of your version of this file only under the terms of
+-;;;  the GPL, and not to allow others to use your version of this file under the
+-;;;  terms of the MPL, indicate your decision by deleting the provisions above
+-;;;  and replace them with the notice and other provisions required by the GPL.
+-;;;  If you do not delete the provisions above, a recipient may use your version
+-;;;  of this file under the terms of any one of the MPL or the GPL.
+-;;;
+-;;;  See www.jazzscheme.org for details.
+-
+-
+-(module jazz.ide.data.connections jazz
+-
+-
+-(export (jazz.schema)))
+diff --git a/lib/jazz.ide/src/jazz/ide/data/workspaces.jazz b/lib/jazz.ide/src/jazz/ide/data/workspaces.jazz
+index 96343d83d..18e719963 100644
+--- a/lib/jazz.ide/src/jazz/ide/data/workspaces.jazz
++++ b/lib/jazz.ide/src/jazz/ide/data/workspaces.jazz
+@@ -41,11 +41,10 @@
+ (export (jazz.debugger)
+         (jazz.designer)
+         (jazz.designer.ui)
+         (jazz.editor.jazz)
+         (jazz.editor.lisp)
+-        (jazz.editor.sql)
+         (jazz.favorite)
+         (jazz.ide)
+         (jazz.project)
+         (jazz.search)
+         (jazz.text)
+diff --git a/lib/jazz.ide/src/jazz/ide/development.jazz b/lib/jazz.ide/src/jazz/ide/development.jazz
+index 9932d1cd1..409fdf201 100644
+--- a/lib/jazz.ide/src/jazz/ide/development.jazz
++++ b/lib/jazz.ide/src/jazz/ide/development.jazz
+@@ -41,12 +41,10 @@
+ (export (jazz.development))
+ 
+ (import (jazz.clipboard)
+         (jazz.component)
+         (jazz.editor.jazz)
+-        (jazz.editor.sql)
+-        (jazz.editor.sql.view)
+         (jazz.feedback)
+         (jazz.geometry)
+         (jazz.graphic)
+         (jazz.io)
+         (jazz.locale)
+@@ -235,18 +233,6 @@
+ (definition public (setup-receiver receiver (title: title #f) (position: position #f) (size: size #f) (invite: invite #f))
+   (new-palette Receiver-View
+                host-title: (or title "Receive Files")
+                host-size: (or size {Dimension 434 224})
+                invite: invite
+-               receiver: receiver))
+-
+-
+-;;;
+-;;;; Data
+-;;;
+-
+-
+-(definition public (inspect-tables tables (name: name #f) (max-display: max-display 250))
+-  (let ((console-text (get-sql-console-text)))
+-    (set-current-request console-text name)
+-    (display-tables console-text tables max-display 0)
+-    tables)))
++               receiver: receiver)))
+diff --git a/lib/jazz.ide/src/jazz/ide/menu.jazz b/lib/jazz.ide/src/jazz/ide/menu.jazz
+index 3d6e1c1f4..7f3a47ba6 100644
+--- a/lib/jazz.ide/src/jazz/ide/menu.jazz
++++ b/lib/jazz.ide/src/jazz/ide/menu.jazz
+@@ -350,15 +350,10 @@
+           (<Label-Item> name: variables             title: "Variables" icon: {Image-Resource "Spy"} action-handler: {Action ide variables})))
+       @waiting
+       (<Label-Item>     name: java                  title: "Java" icon: {Image-Resource "Java"}
+         (<Menu>
+           (<Label-Item> name: java-manager          title: "Java Manager" icon: {Image-Resource "Java"} action-handler: {Action ide view-java-manager})))
+-      (<Label-Item>     name: sql                   title: "SQL" icon: {Image-Resource "Databases"}
+-        (<Menu>
+-          (<Label-Item> name: sql-connections       title: "SQL Connections" icon: {Image-Resource "Databases"} action-handler: {Action ide view-sql-connections})
+-          @waiting (<Label-Item> name: sql-inventory         title: "SQL Inventory" icon: {Image-Resource "Database"} action-handler: {Action ide view-sql-inventory})
+-          (<Label-Item> name: sql-console           title: "SQL Console" icon: {Image-Resource "Console"} action-handler: {Action ide view-sql-console})))
+       (<Label-Item>     name: designer              title: "Designer" icon: {Image-Resource "Sorcerer"}
+         (<Menu>
+           (<Label-Item> name: toolbox               title: "Toolbox" icon: {Image-Resource "Toolbox"} action-handler: {Action ide view-toolbox})
+           (<Label-Item> name: traits                title: "Traits" icon: {Image-Resource "Traits"} action-handler: {Action ide view-traits})
+           (<Label-Item> name: descendants           title: "Descendants" icon: {Image-Resource "Components"} action-handler: {Action ide view-descendants})))
